@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mnbp.project.business.mapper.CustomerMapper">
+    
+    <resultMap type="Customer" id="CustomerResult">
+        <result property="id"    column="id"    />
+        <result property="customerName"    column="customer_name"    />
+        <result property="idType"    column="id_type"    />
+        <result property="idNumber"    column="id_number"    />
+        <result property="sex"    column="sex"    />
+        <result property="birthdate"    column="birthdate"    />
+        <result property="phonenumber"    column="phonenumber"    />
+        <result property="examinatidonDate"    column="examinatidon_date"    />
+        <result property="province"    column="province"    />
+        <result property="city"    column="city"    />
+        <result property="branchName"    column="branch_name"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="schemeCode"    column="scheme_code"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectCustomerVo">
+        select id, customer_name, id_type, id_number, sex, birthdate, phonenumber, examinatidon_date, province, city, branch_name, del_flag, scheme_code, create_by, create_time, update_by, update_time from customer
+    </sql>
+
+    <select id="selectCustomerList" parameterType="Customer" resultMap="CustomerResult">
+        <include refid="selectCustomerVo"/>
+        <where>  
+            <if test="customerName != null  and customerName != ''"> and customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="idNumber != null  and idNumber != ''"> and id_number = #{idNumber}</if>
+            <if test="city != null  and city != ''"> and city = #{city}</if>
+            <if test="branchName != null  and branchName != ''"> and branch_name like concat('%', #{branchName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectCustomerById" parameterType="Integer" resultMap="CustomerResult">
+        <include refid="selectCustomerVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertCustomer" parameterType="Customer" useGeneratedKeys="true" keyProperty="id">
+        insert into customer
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="customerName != null  and customerName != ''">customer_name,</if>
+            <if test="idType != null  and idType != ''">id_type,</if>
+            <if test="idNumber != null  and idNumber != ''">id_number,</if>
+            <if test="sex != null  and sex != ''">sex,</if>
+            <if test="birthdate != null ">birthdate,</if>
+            <if test="phonenumber != null  and phonenumber != ''">phonenumber,</if>
+            <if test="examinatidonDate != null ">examinatidon_date,</if>
+            <if test="province != null  and province != ''">province,</if>
+            <if test="city != null  and city != ''">city,</if>
+            <if test="branchName != null  and branchName != ''">branch_name,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+            <if test="schemeCode != null  and schemeCode != ''">scheme_code,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="customerName != null  and customerName != ''">#{customerName},</if>
+            <if test="idType != null  and idType != ''">#{idType},</if>
+            <if test="idNumber != null  and idNumber != ''">#{idNumber},</if>
+            <if test="sex != null  and sex != ''">#{sex},</if>
+            <if test="birthdate != null ">#{birthdate},</if>
+            <if test="phonenumber != null  and phonenumber != ''">#{phonenumber},</if>
+            <if test="examinatidonDate != null ">#{examinatidonDate},</if>
+            <if test="province != null  and province != ''">#{province},</if>
+            <if test="city != null  and city != ''">#{city},</if>
+            <if test="branchName != null  and branchName != ''">#{branchName},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+            <if test="schemeCode != null  and schemeCode != ''">#{schemeCode},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCustomer" parameterType="Customer">
+        update customer
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="customerName != null  and customerName != ''">customer_name = #{customerName},</if>
+            <if test="idType != null  and idType != ''">id_type = #{idType},</if>
+            <if test="idNumber != null  and idNumber != ''">id_number = #{idNumber},</if>
+            <if test="sex != null  and sex != ''">sex = #{sex},</if>
+            <if test="birthdate != null ">birthdate = #{birthdate},</if>
+            <if test="phonenumber != null  and phonenumber != ''">phonenumber = #{phonenumber},</if>
+            <if test="examinatidonDate != null ">examinatidon_date = #{examinatidonDate},</if>
+            <if test="province != null  and province != ''">province = #{province},</if>
+            <if test="city != null  and city != ''">city = #{city},</if>
+            <if test="branchName != null  and branchName != ''">branch_name = #{branchName},</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="schemeCode != null  and schemeCode != ''">scheme_code = #{schemeCode},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCustomerById" parameterType="Integer">
+        delete from customer where id = #{id}
+    </delete>
+
+    <delete id="deleteCustomerByIds" parameterType="String">
+        delete from customer where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
