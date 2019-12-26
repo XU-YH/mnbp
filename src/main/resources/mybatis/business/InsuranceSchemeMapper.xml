@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mnbp.project.business.mapper.InsuranceSchemeMapper">
+    
+    <resultMap type="InsuranceScheme" id="InsuranceSchemeResult">
+        <result property="id"    column="id"    />
+        <result property="schemeCode"    column="scheme_code"    />
+        <result property="schemeName"    column="scheme_name"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectInsuranceSchemeVo">
+        select id, scheme_code, scheme_name, del_flag, create_by, create_time, update_by, update_time from insurance_scheme
+    </sql>
+
+    <select id="selectInsuranceSchemeList" parameterType="InsuranceScheme" resultMap="InsuranceSchemeResult">
+        <include refid="selectInsuranceSchemeVo"/>
+        <where>  
+            <if test="schemeCode != null  and schemeCode != ''"> and scheme_code = #{schemeCode}</if>
+            <if test="schemeName != null  and schemeName != ''"> and scheme_name like concat('%', #{schemeName}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectInsuranceSchemeById" parameterType="Integer" resultMap="InsuranceSchemeResult">
+        <include refid="selectInsuranceSchemeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertInsuranceScheme" parameterType="InsuranceScheme" useGeneratedKeys="true" keyProperty="id">
+        insert into insurance_scheme
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="schemeCode != null  and schemeCode != ''">scheme_code,</if>
+            <if test="schemeName != null  and schemeName != ''">scheme_name,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="schemeCode != null  and schemeCode != ''">#{schemeCode},</if>
+            <if test="schemeName != null  and schemeName != ''">#{schemeName},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateInsuranceScheme" parameterType="InsuranceScheme">
+        update insurance_scheme
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="schemeCode != null  and schemeCode != ''">scheme_code = #{schemeCode},</if>
+            <if test="schemeName != null  and schemeName != ''">scheme_name = #{schemeName},</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteInsuranceSchemeById" parameterType="Integer">
+        delete from insurance_scheme where id = #{id}
+    </delete>
+
+    <delete id="deleteInsuranceSchemeByIds" parameterType="String">
+        delete from insurance_scheme where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
