@@ -11,7 +11,7 @@ import lombok.Data;
  * @date: 2019/12/27 15:15
  */
 @Data
-public class SchemeClauseVO {
+public class SchemeClauseVo {
     /** ID */
     private Integer id;
 
@@ -36,4 +36,10 @@ public class SchemeClauseVO {
      */
     @Excel(name = "方案代码")
     private String schemeCode;
+
+    /**
+     * 方案名称
+     */
+    @Excel(name = "方案名称")
+    private String schemeName;
 }

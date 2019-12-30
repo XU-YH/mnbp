@@ -1,6 +1,9 @@
 package com.mnbp.project.business.controller;
 
 import java.util.List;
+
+import com.mnbp.project.business.domain.bo.InsuranceInfoBo;
+import com.mnbp.project.business.domain.vo.InsuranceInfoVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,6 +43,20 @@ public class CustomerController extends BaseController {
     public TableDataInfo list(Customer customer) {
         startPage();
         List<Customer> list = customerService.selectCustomerList(customer);
+        return getDataTable(list);
+    }
+
+    /**
+     * 权益查询，查询客户承保信息
+     *
+     * @param insuranceInfoBo 客户承保信息BO
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('business:customer:insuranceInfo:list')")
+    @GetMapping("/insuranceInfo/list")
+    public TableDataInfo insuranceInfoList(InsuranceInfoBo insuranceInfoBo) {
+        startPage();
+        List<InsuranceInfoVo> list = customerService.selectCustomerInsuranceInfoList(insuranceInfoBo);
         return getDataTable(list);
     }
 

@@ -1,6 +1,9 @@
 package com.mnbp.project.business.service;
 
 import com.mnbp.project.business.domain.Customer;
+import com.mnbp.project.business.domain.bo.InsuranceInfoBo;
+import com.mnbp.project.business.domain.vo.InsuranceInfoVo;
+
 import java.util.List;
 
 /**
@@ -58,4 +61,12 @@ public interface ICustomerService
      * @return 结果
      */
     public int deleteCustomerById(Integer id);
+
+    /**
+     * 权益查询，查询客户承保信息
+     *
+     * @param insuranceInfoBo 客户承保信息BO
+     * @return
+     */
+    List<InsuranceInfoVo> selectCustomerInsuranceInfoList(InsuranceInfoBo insuranceInfoBo);
 }

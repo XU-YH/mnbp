@@ -3,8 +3,8 @@ package com.mnbp.project.business.mapper;
 import java.util.List;
 
 import com.mnbp.project.business.domain.SchemeClause;
-import com.mnbp.project.business.domain.dto.SchemeClauseBO;
-import com.mnbp.project.business.domain.vo.SchemeClauseVO;
+import com.mnbp.project.business.domain.bo.SchemeClauseBO;
+import com.mnbp.project.business.domain.vo.SchemeClauseVo;
 
 /**
  * 方案条款Mapper接口
@@ -29,7 +29,7 @@ public interface SchemeClauseMapper {
      *            方案条款
      * @return 方案条款集合
      */
-    public List<SchemeClauseVO> selectSchemeClauseList(SchemeClauseBO schemeClauseBO);
+    public List<SchemeClauseVo> selectSchemeClauseList(SchemeClauseBO schemeClauseBO);
 
     /**
      * 新增方案条款

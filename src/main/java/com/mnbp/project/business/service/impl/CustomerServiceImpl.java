@@ -2,6 +2,8 @@ package com.mnbp.project.business.service.impl;
 
 import java.util.List;
 import com.mnbp.common.utils.DateUtils;
+import com.mnbp.project.business.domain.bo.InsuranceInfoBo;
+import com.mnbp.project.business.domain.vo.InsuranceInfoVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.mnbp.project.business.mapper.CustomerMapper;
@@ -92,5 +94,16 @@ public class CustomerServiceImpl implements ICustomerService
     public int deleteCustomerById(Integer id)
     {
         return customerMapper.deleteCustomerById(id);
+    }
+
+    /**
+     * 权益查询，查询客户承保信息
+     *
+     * @param insuranceInfoBo 客户承保信息BO
+     * @return
+     */
+    @Override
+    public List<InsuranceInfoVo> selectCustomerInsuranceInfoList(InsuranceInfoBo insuranceInfoBo) {
+        return customerMapper.selectCustomerInsuranceInfoList(insuranceInfoBo);
     }
 }

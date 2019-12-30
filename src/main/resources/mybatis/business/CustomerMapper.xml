@@ -24,6 +24,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"    column="update_time"    />
     </resultMap>
 
+    <resultMap type="InsuranceInfoVo" id="InsuranceInfoVoResult">
+        <result property="customerName"    column="customer_name"    />
+        <result property="idNumber"    column="id_number"    />
+        <result property="branchName"    column="branch_name"    />
+        <result property="schemeName"    column="scheme_name"    />
+        <result property="schemeId"    column="scheme_id"    />
+    </resultMap>
+
     <sql id="selectCustomerVo">
         select id, customer_name, id_type, id_number, sex, birthdate, phonenumber, examinatidon_date, province, city, branch_name, del_flag, scheme_code, create_by, create_time, update_by, update_time from customer
     </sql>
@@ -116,5 +124,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
-    
+
+    <select id="selectCustomerInsuranceInfoList" parameterType="InsuranceInfoBo" resultMap="InsuranceInfoVoResult">
+        select c.customer_name, c.id_number, c.branch_name, s.scheme_name, s.id scheme_id
+        from customer c left join insurance_scheme s on c.scheme_code = s.scheme_code
+        <where>
+            <if test="customerName != null  and customerName != ''"> and c.customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="idNumber != null  and idNumber != ''"> and c.id_number = #{idNumber}</if>
+        </where>
+    </select>
 </mapper>

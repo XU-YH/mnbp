@@ -16,21 +16,22 @@
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
-    <resultMap id="SchemeClauseVOResult" type="SchemeClauseVO">
+    <resultMap id="SchemeClauseVoResult" type="SchemeClauseVo">
         <result property="id" column="id"/>
         <result property="schemeId" column="scheme_id"/>
         <result property="clauseName" column="clause_name"/>
         <result property="compensationLimit" column="compensation_limit"/>
         <result property="clauseContent" column="clause_content"/>
         <result property="schemeCode" column="scheme_code"/>
+        <result property="schemeName" column="scheme_name"/>
     </resultMap>
 
     <sql id="selectSchemeClauseVo">
         select id, scheme_id, clause_name, compensation_limit, clause_content, create_by, create_time, update_by, update_time from scheme_clause
     </sql>
 
-    <select id="selectSchemeClauseList" parameterType="SchemeClauseBO" resultMap="SchemeClauseVOResult">
-        select c.*, s.scheme_code
+    <select id="selectSchemeClauseList" parameterType="SchemeClauseBO" resultMap="SchemeClauseVoResult">
+        select c.*, s.scheme_code, s.scheme_name
         from scheme_clause c, insurance_scheme s
         <where>
             c.scheme_id = s.id

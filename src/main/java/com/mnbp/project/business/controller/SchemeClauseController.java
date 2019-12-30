@@ -13,8 +13,8 @@ import com.mnbp.framework.web.controller.BaseController;
 import com.mnbp.framework.web.domain.AjaxResult;
 import com.mnbp.framework.web.page.TableDataInfo;
 import com.mnbp.project.business.domain.SchemeClause;
-import com.mnbp.project.business.domain.dto.SchemeClauseBO;
-import com.mnbp.project.business.domain.vo.SchemeClauseVO;
+import com.mnbp.project.business.domain.bo.SchemeClauseBO;
+import com.mnbp.project.business.domain.vo.SchemeClauseVo;
 import com.mnbp.project.business.service.ISchemeClauseService;
 
 /**
@@ -32,11 +32,11 @@ public class SchemeClauseController extends BaseController {
     /**
      * 查询方案条款列表
      */
-    @PreAuthorize("@ss.hasPermi('business:insuranceScheme:list')")
+    @PreAuthorize("@ss.hasAnyPermi('business:insuranceScheme:list,business:customer:insuranceInfo:list')")
     @GetMapping("/list")
     public TableDataInfo list(SchemeClauseBO schemeClauseBO) {
         startPage();
-        List<SchemeClauseVO> list = schemeClauseService.selectSchemeClauseList(schemeClauseBO);
+        List<SchemeClauseVo> list = schemeClauseService.selectSchemeClauseList(schemeClauseBO);
         return getDataTable(list);
     }
 
@@ -47,8 +47,8 @@ public class SchemeClauseController extends BaseController {
     @Log(title = "方案条款", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(SchemeClauseBO schemeClauseBO) {
-        List<SchemeClauseVO> list = schemeClauseService.selectSchemeClauseList(schemeClauseBO);
-        ExcelUtil<SchemeClauseVO> util = new ExcelUtil<SchemeClauseVO>(SchemeClauseVO.class);
+        List<SchemeClauseVo> list = schemeClauseService.selectSchemeClauseList(schemeClauseBO);
+        ExcelUtil<SchemeClauseVo> util = new ExcelUtil<SchemeClauseVo>(SchemeClauseVo.class);
         return util.exportExcel(list, "clause");
     }
 

@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 import com.mnbp.common.utils.DateUtils;
 import com.mnbp.project.business.domain.SchemeClause;
-import com.mnbp.project.business.domain.dto.SchemeClauseBO;
-import com.mnbp.project.business.domain.vo.SchemeClauseVO;
+import com.mnbp.project.business.domain.bo.SchemeClauseBO;
+import com.mnbp.project.business.domain.vo.SchemeClauseVo;
 import com.mnbp.project.business.mapper.SchemeClauseMapper;
 import com.mnbp.project.business.service.ISchemeClauseService;
 
@@ -43,7 +43,7 @@ public class SchemeClauseServiceImpl implements ISchemeClauseService {
      * @return 方案条款
      */
     @Override
-    public List<SchemeClauseVO> selectSchemeClauseList(SchemeClauseBO schemeClauseBO) {
+    public List<SchemeClauseVo> selectSchemeClauseList(SchemeClauseBO schemeClauseBO) {
         return schemeClauseMapper.selectSchemeClauseList(schemeClauseBO);
     }
 

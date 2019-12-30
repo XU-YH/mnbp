@@ -1,4 +1,4 @@
-package com.mnbp.project.business.domain.dto;
+package com.mnbp.project.business.domain.bo;
 
 import lombok.Data;
 
