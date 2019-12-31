@@ -3,6 +3,8 @@ package com.mnbp.project.business.mapper;
 import com.mnbp.project.business.domain.Customer;
 import com.mnbp.project.business.domain.bo.InsuranceInfoBo;
 import com.mnbp.project.business.domain.vo.InsuranceInfoVo;
+import com.mnbp.project.weixin.domain.bo.WeixinInsuranceInfoBo;
+import com.mnbp.project.weixin.domain.vo.WeixinInsuranceInfoVo;
 
 import java.util.List;
 
@@ -12,11 +14,11 @@ import java.util.List;
  * @author xuyinhui
  * @date 2019-12-26
  */
-public interface CustomerMapper 
+public interface CustomerMapper
 {
     /**
      * 查询客户
-     * 
+     *
      * @param id 客户ID
      * @return 客户
      */
@@ -24,7 +26,7 @@ public interface CustomerMapper
 
     /**
      * 查询客户列表
-     * 
+     *
      * @param customer 客户
      * @return 客户集合
      */
@@ -32,7 +34,7 @@ public interface CustomerMapper
 
     /**
      * 新增客户
-     * 
+     *
      * @param customer 客户
      * @return 结果
      */
@@ -40,7 +42,7 @@ public interface CustomerMapper
 
     /**
      * 修改客户
-     * 
+     *
      * @param customer 客户
      * @return 结果
      */
@@ -48,7 +50,7 @@ public interface CustomerMapper
 
     /**
      * 删除客户
-     * 
+     *
      * @param id 客户ID
      * @return 结果
      */
@@ -56,7 +58,7 @@ public interface CustomerMapper
 
     /**
      * 批量删除客户
-     * 
+     *
      * @param ids 需要删除的数据ID
      * @return 结果
      */
@@ -69,4 +71,12 @@ public interface CustomerMapper
      * @return
      */
     List<InsuranceInfoVo> selectCustomerInsuranceInfoList(InsuranceInfoBo insuranceInfoBo);
+
+    /**
+     * 微信查询承保信息
+     *
+     * @param weixinInsuranceInfoBo 承保信息查询参数
+     * @return
+     */
+    WeixinInsuranceInfoVo getInsuranceInfo(WeixinInsuranceInfoBo weixinInsuranceInfoBo);
 }

@@ -32,6 +32,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="schemeId"    column="scheme_id"    />
     </resultMap>
 
+    <resultMap id="WeixinInsuranceInfoVoResult" type="WeixinInsuranceInfoVo">
+        <result property="customerName" column="customer_name" />
+        <result property="exminatidonDate" column="examinatidon_date" />
+        <collection property="schemeClauseList" ofType="SchemeClause">
+            <result property="clauseName" column="clause_name" />
+            <result property="compensationLimit" column="compensation_limit" />
+        </collection>
+    </resultMap>
+
     <sql id="selectCustomerVo">
         select id, customer_name, id_type, id_number, sex, birthdate, phonenumber, examinatidon_date, province, city, branch_name, del_flag, scheme_code, create_by, create_time, update_by, update_time from customer
     </sql>
@@ -132,5 +141,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="customerName != null  and customerName != ''"> and c.customer_name like concat('%', #{customerName}, '%')</if>
             <if test="idNumber != null  and idNumber != ''"> and c.id_number = #{idNumber}</if>
         </where>
+    </select>
+
+    <!-- 微信查询承保信息 -->
+    <select id="getInsuranceInfo" parameterType="WeixinInsuranceInfoBo" resultMap="WeixinInsuranceInfoVoResult">
+        select c.customer_name, c.examinatidon_date, sc.clause_name, sc.compensation_limit
+        from customer c, insurance_scheme s, scheme_clause sc
+        where c.customer_name = #{customerName} and c.id_number = #{idNumber} and c.scheme_code = s.scheme_code and s.id = sc.scheme_id
     </select>
 </mapper>

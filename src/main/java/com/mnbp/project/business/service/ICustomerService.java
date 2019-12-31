@@ -1,10 +1,10 @@
 package com.mnbp.project.business.service;
 
+import java.util.List;
+
 import com.mnbp.project.business.domain.Customer;
 import com.mnbp.project.business.domain.bo.InsuranceInfoBo;
 import com.mnbp.project.business.domain.vo.InsuranceInfoVo;
-
-import java.util.List;
 
 /**
  * 客户Service接口
