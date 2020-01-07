@@ -2,6 +2,7 @@ package com.mnbp.project.business.service;
 
 import java.util.List;
 
+import com.mnbp.framework.web.domain.AjaxResult;
 import com.mnbp.project.business.domain.Customer;
 import com.mnbp.project.business.domain.bo.InsuranceInfoBo;
 import com.mnbp.project.business.domain.vo.InsuranceInfoVo;
@@ -69,4 +70,12 @@ public interface ICustomerService
      * @return
      */
     List<InsuranceInfoVo> selectCustomerInsuranceInfoList(InsuranceInfoBo insuranceInfoBo);
+
+    /**
+     *
+     * @param customerList excel表
+     * @param operName 登陆人名称
+     * @return
+     */
+    AjaxResult importUser(List<Customer> customerList, String operName);
 }

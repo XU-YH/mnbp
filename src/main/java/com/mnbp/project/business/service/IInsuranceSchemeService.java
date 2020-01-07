@@ -9,11 +9,11 @@ import java.util.List;
  * @author yinhui xu
  * @date 2019-12-26
  */
-public interface IInsuranceSchemeService 
+public interface IInsuranceSchemeService
 {
     /**
      * 查询方案
-     * 
+     *
      * @param id 方案ID
      * @return 方案
      */
@@ -21,7 +21,7 @@ public interface IInsuranceSchemeService
 
     /**
      * 查询方案列表
-     * 
+     *
      * @param insuranceScheme 方案
      * @return 方案集合
      */
@@ -29,7 +29,7 @@ public interface IInsuranceSchemeService
 
     /**
      * 新增方案
-     * 
+     *
      * @param insuranceScheme 方案
      * @return 结果
      */
@@ -37,7 +37,7 @@ public interface IInsuranceSchemeService
 
     /**
      * 修改方案
-     * 
+     *
      * @param insuranceScheme 方案
      * @return 结果
      */
@@ -45,7 +45,7 @@ public interface IInsuranceSchemeService
 
     /**
      * 批量删除方案
-     * 
+     *
      * @param ids 需要删除的方案ID
      * @return 结果
      */
@@ -53,9 +53,16 @@ public interface IInsuranceSchemeService
 
     /**
      * 删除方案信息
-     * 
+     *
      * @param id 方案ID
      * @return 结果
      */
     public int deleteInsuranceSchemeById(Integer id);
+
+    /**
+     * 查询方案代码list
+     *
+     * @return
+     */
+    List<String> selectSchemeCodeList();
 }

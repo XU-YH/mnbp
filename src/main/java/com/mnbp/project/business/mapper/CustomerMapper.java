@@ -1,12 +1,13 @@
 package com.mnbp.project.business.mapper;
 
+import java.util.Collection;
+import java.util.List;
+
 import com.mnbp.project.business.domain.Customer;
 import com.mnbp.project.business.domain.bo.InsuranceInfoBo;
 import com.mnbp.project.business.domain.vo.InsuranceInfoVo;
 import com.mnbp.project.weixin.domain.bo.WeixinInsuranceInfoBo;
 import com.mnbp.project.weixin.domain.vo.WeixinInsuranceInfoVo;
-
-import java.util.List;
 
 /**
  * 客户Mapper接口
@@ -79,4 +80,20 @@ public interface CustomerMapper
      * @return
      */
     WeixinInsuranceInfoVo getInsuranceInfo(WeixinInsuranceInfoBo weixinInsuranceInfoBo);
+
+    /**
+     * 批量插入客户Customer数据
+     *
+     * @param list 客户数据
+     * @return
+     */
+    int batchInsertCustomer(Collection<Customer> list);
+
+    /**
+     * 根据证件号查询客户信息
+     *
+     * @param idNumber 证件号
+     * @return
+     */
+    Customer selectCustomerByIdNumber(String idNumber);
 }

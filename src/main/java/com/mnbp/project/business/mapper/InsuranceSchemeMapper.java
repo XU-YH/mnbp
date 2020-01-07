@@ -58,4 +58,11 @@ public interface InsuranceSchemeMapper
      * @return 结果
      */
     public int deleteInsuranceSchemeByIds(Integer[] ids);
+
+    /**
+     * 查询方案代码list
+     *
+     * @return
+     */
+    List<String> selectSchemeCodeList();
 }

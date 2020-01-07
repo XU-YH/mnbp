@@ -98,4 +98,9 @@ public class Constants
      * 资源映射路径 前缀
      */
     public static final String RESOURCE_PREFIX = "/profile";
+
+    /**
+     * 批量插入数据库
+     */
+    public static final int BATCH_COUNT = 3000;
 }

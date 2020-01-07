@@ -63,6 +63,12 @@ public class SysUserController extends BaseController
         return getDataTable(list);
     }
 
+    /**
+     * 导出用户数据
+     *
+     * @param user
+     * @return
+     */
     @Log(title = "用户管理", businessType = BusinessType.EXPORT)
     @PreAuthorize("@ss.hasPermi('system:user:export')")
     @GetMapping("/export")
@@ -73,6 +79,14 @@ public class SysUserController extends BaseController
         return util.exportExcel(list, "用户数据");
     }
 
+    /**
+     * 导入用户数据
+     *
+     * @param file excel表
+     * @param updateSupport 是否更新老数据
+     * @return
+     * @throws Exception
+     */
     @Log(title = "用户管理", businessType = BusinessType.IMPORT)
     @PreAuthorize("@ss.hasPermi('system:user:import')")
     @PostMapping("/importData")

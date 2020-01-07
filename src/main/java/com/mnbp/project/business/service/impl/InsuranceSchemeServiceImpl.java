@@ -93,4 +93,14 @@ public class InsuranceSchemeServiceImpl implements IInsuranceSchemeService
     {
         return insuranceSchemeMapper.deleteInsuranceSchemeById(id);
     }
+
+    /**
+     * 查询方案代码list
+     *
+     * @return
+     */
+    @Override
+    public List<String> selectSchemeCodeList() {
+        return insuranceSchemeMapper.selectSchemeCodeList();
+    }
 }
