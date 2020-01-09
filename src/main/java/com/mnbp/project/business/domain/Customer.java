@@ -45,7 +45,7 @@ public class Customer extends BaseEntity {
     private String phonenumber;
 
     /** 到检日期（体检） */
-    @Excel(name = "到检日期")
+    @Excel(name = "到检日期", dateFormat = "yyyy-MM-dd")
     private Date examinatidonDate;
 
     /** 省份 */

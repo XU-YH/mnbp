@@ -1,55 +1,31 @@
 package com.mnbp.common.utils.poi;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DataValidation;
-import org.apache.poi.ss.usermodel.DataValidationConstraint;
-import org.apache.poi.ss.usermodel.DataValidationHelper;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.mnbp.common.core.text.Convert;
+import com.mnbp.common.exception.CustomException;
+import com.mnbp.common.utils.DateUtils;
+import com.mnbp.common.utils.StringUtils;
+import com.mnbp.common.utils.reflect.ReflectUtils;
 import com.mnbp.framework.aspectj.lang.annotation.Excel;
 import com.mnbp.framework.aspectj.lang.annotation.Excel.ColumnType;
 import com.mnbp.framework.aspectj.lang.annotation.Excel.Type;
 import com.mnbp.framework.aspectj.lang.annotation.Excels;
 import com.mnbp.framework.config.RuoYiConfig;
 import com.mnbp.framework.web.domain.AjaxResult;
-import com.mnbp.common.core.text.Convert;
-import com.mnbp.common.exception.CustomException;
-import com.mnbp.common.utils.DateUtils;
-import com.mnbp.common.utils.StringUtils;
-import com.mnbp.common.utils.reflect.ReflectUtils;
 
 /**
  * Excel相关处理
@@ -251,7 +227,10 @@ public class ExcelUtil<T>
                     {
                         if (val instanceof String)
                         {
-                            val = DateUtils.parseDate(val);
+                            if (val != null)
+                            {
+                                val = org.apache.commons.lang3.time.DateUtils.parseDate(val.toString(), DateUtils.parsePatterns);
+                            }
                         }
                         else if (val instanceof Double)
                         {
