@@ -65,4 +65,12 @@ public interface InsuranceSchemeMapper
      * @return
      */
     List<String> selectSchemeCodeList();
+
+    /**
+     * 根据方案代码查找方案
+     *
+     * @param insuranceScheme
+     * @return
+     */
+    InsuranceScheme selectBySchemeCode(InsuranceScheme insuranceScheme);
 }

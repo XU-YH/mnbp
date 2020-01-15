@@ -6,9 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.mnbp.common.enums.DelFlagEnum;
 import com.mnbp.common.utils.ServletUtils;
 import com.mnbp.common.utils.poi.ExcelUtil;
 import com.mnbp.framework.aspectj.lang.annotation.Log;
@@ -51,6 +53,7 @@ public class CustomerController extends BaseController {
     @GetMapping("/list")
     public TableDataInfo list(Customer customer) {
         startPage();
+        customer.setDelFlag(DelFlagEnum.OK.getCode());
         List<Customer> list = customerService.selectCustomerList(customer);
         return getDataTable(list);
     }
@@ -77,6 +80,7 @@ public class CustomerController extends BaseController {
     @Log(title = "客户", businessType = BusinessType.EXPORT)
     @GetMapping("/export")
     public AjaxResult export(Customer customer) {
+        customer.setDelFlag(DelFlagEnum.OK.getCode());
         List<Customer> list = customerService.selectCustomerList(customer);
         ExcelUtil<Customer> util = new ExcelUtil<Customer>(Customer.class);
         return util.exportExcel(list, "人员数据");
@@ -97,8 +101,11 @@ public class CustomerController extends BaseController {
     @PreAuthorize("@ss.hasPermi('business:customer:add')")
     @Log(title = "客户", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody Customer customer) {
-        return toAjax(customerService.insertCustomer(customer));
+    public AjaxResult add(@Validated @RequestBody Customer customer) {
+        // 获取当前登录人信息
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+
+        return customerService.insertCustomer(customer, loginUser.getUsername());
     }
 
     /**
@@ -107,18 +114,24 @@ public class CustomerController extends BaseController {
     @PreAuthorize("@ss.hasPermi('business:customer:edit')")
     @Log(title = "客户", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody Customer customer) {
-        return toAjax(customerService.updateCustomer(customer));
+    public AjaxResult edit(@Validated @RequestBody Customer customer) {
+        // 获取当前登录人信息
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+
+        return customerService.updateCustomer(customer, loginUser.getUsername());
     }
 
     /**
-     * 删除客户
+     * 删除客户，逻辑删除，修改del_flag的值为2
      */
     @PreAuthorize("@ss.hasPermi('business:customer:remove')")
     @Log(title = "客户", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Integer[] ids) {
-        return toAjax(customerService.deleteCustomerByIds(ids));
+        // 获取当前登录人信息
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+
+        return toAjax(customerService.updateByIdsForDel(ids, loginUser.getUsername()));
     }
 
     /**

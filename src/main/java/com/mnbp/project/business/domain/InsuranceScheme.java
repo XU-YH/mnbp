@@ -4,6 +4,9 @@ import com.mnbp.framework.aspectj.lang.annotation.Excel;
 import com.mnbp.framework.web.domain.BaseEntity;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotEmpty;
 
 /**
  * 方案对象 insurance_scheme
@@ -19,10 +22,13 @@ public class InsuranceScheme extends BaseEntity
     private Integer id;
 
     /** 方案代码 */
+    @NotEmpty(message = "方案代码不能为空")
+    @Length(max = 8, min = 8, message = "方案代码长度必须为8位")
     @Excel(name = "方案代码")
     private String schemeCode;
 
     /** 方案名称 */
+    @NotEmpty(message = "方案名称不能为空")
     @Excel(name = "方案名称")
     private String schemeName;
 

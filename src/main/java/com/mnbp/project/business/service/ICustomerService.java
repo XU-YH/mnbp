@@ -35,17 +35,19 @@ public interface ICustomerService
      * 新增客户
      * 
      * @param customer 客户
+     * @param operName 创建人
      * @return 结果
      */
-    public int insertCustomer(Customer customer);
+    AjaxResult insertCustomer(Customer customer, String operName);
 
     /**
      * 修改客户
      * 
      * @param customer 客户
+     * @param operName
      * @return 结果
      */
-    public int updateCustomer(Customer customer);
+    AjaxResult updateCustomer(Customer customer, String operName);
 
     /**
      * 批量删除客户
@@ -78,4 +80,13 @@ public interface ICustomerService
      * @return
      */
     AjaxResult importUser(List<Customer> customerList, String operName);
+
+    /**
+     * 删除客户，逻辑删除，修改del_flag的值为2
+     *
+     * @param ids id
+     * @param operName
+     * @return
+     */
+    int updateByIdsForDel(Integer[] ids, String operName);
 }

@@ -48,14 +48,24 @@
     <select id="selectCustomerList" parameterType="Customer" resultMap="CustomerResult">
         <include refid="selectCustomerVo"/>
         <where>
-            <if test="customerName != null  and customerName != ''">and customer_name like concat('%', #{customerName},
-                '%')
-            </if>
+            <if test="customerName != null  and customerName != ''">and customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="idType != null  and idType != ''">and id_type = #{idType}</if>
             <if test="idNumber != null  and idNumber != ''">and id_number = #{idNumber}</if>
+            <if test="sex != null  and sex != ''">and sex = #{sex}</if>
+            <if test="birthdate != null ">and birthdate = #{birthdate}</if>
+            <if test="phonenumber != null  and phonenumber != ''">and phonenumber = #{phonenumber}</if>
+            <if test="examinatidonDate != null ">and examinatidon_date = #{examinatidonDate}</if>
+            <if test="province != null  and province != ''">and province = #{province}</if>
             <if test="city != null  and city != ''">and city = #{city}</if>
-            <if test="branchName != null  and branchName != ''">and branch_name like concat('%', #{branchName}, '%')
-            </if>
+            <if test="branchName != null  and branchName != ''">and branch_name like concat('%', #{branchName}, '%')</if>
+            <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
+            <if test="schemeCode != null  and schemeCode != ''">and scheme_code = #{schemeCode}</if>
+            <if test="createBy != null  and createBy != ''">and create_by = #{createBy}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="updateBy != null  and updateBy != ''">and update_by = #{updateBy}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
         </where>
+        order by examinatidon_date desc
     </select>
 
     <select id="selectCustomerById" parameterType="Integer" resultMap="CustomerResult">
@@ -137,22 +147,24 @@
         </foreach>
     </delete>
 
+    <!-- 权益查询 -->
     <select id="selectCustomerInsuranceInfoList" parameterType="InsuranceInfoBo" resultMap="InsuranceInfoVoResult">
         select c.customer_name, c.id_number, c.branch_name, s.scheme_name, s.id scheme_id
         from customer c left join insurance_scheme s on c.scheme_code = s.scheme_code
-        <where>
+        where
+            c.del_flag = '0'
             <if test="customerName != null  and customerName != ''">and c.customer_name like concat('%',
                 #{customerName}, '%')
             </if>
             <if test="idNumber != null  and idNumber != ''">and c.id_number = #{idNumber}</if>
-        </where>
     </select>
 
-    <!-- 微信查询承保信息 -->
+    <!-- 查询承保信息 -->
     <select id="getInsuranceInfo" parameterType="WeixinInsuranceInfoBo" resultMap="WeixinInsuranceInfoVoResult">
         select c.customer_name, c.examinatidon_date, sc.clause_name, sc.compensation_limit
         from customer c, insurance_scheme s, scheme_clause sc
-        where c.customer_name = #{customerName} and c.id_number = #{idNumber} and c.scheme_code = s.scheme_code and s.id = sc.scheme_id
+        where c.customer_name = #{customerName} and c.id_number = #{idNumber} and c.del_flag = '0' and c.scheme_code = s.scheme_code and s.id = sc.scheme_id
+        order by c.examinatidon_date desc
     </select>
 
     <!-- 批量插入客户Customer数据 -->
@@ -168,7 +180,7 @@
         </foreach>
     </insert>
 
-    <!-- 根据证件号查询客户信息 -->
+    <!-- 根据证件号和到检日期查询客户信息 -->
     <select id="selectCustomerByIdNumber" resultMap="CustomerResult">
         <include refid="selectCustomerVo"/>
         where id_number = #{idNumber} and examinatidon_date = #{examinatidonDate} and del_flag = '0'

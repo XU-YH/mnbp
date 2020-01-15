@@ -81,7 +81,7 @@ public interface CustomerMapper
      * @param weixinInsuranceInfoBo 承保信息查询参数
      * @return
      */
-    WeixinInsuranceInfoVo getInsuranceInfo(WeixinInsuranceInfoBo weixinInsuranceInfoBo);
+    List<WeixinInsuranceInfoVo> getInsuranceInfo(WeixinInsuranceInfoBo weixinInsuranceInfoBo);
 
     /**
      * 批量插入客户Customer数据

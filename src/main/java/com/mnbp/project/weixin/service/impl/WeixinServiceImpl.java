@@ -1,12 +1,14 @@
 package com.mnbp.project.weixin.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.mnbp.project.business.mapper.CustomerMapper;
 import com.mnbp.project.weixin.domain.bo.WeixinInsuranceInfoBo;
 import com.mnbp.project.weixin.domain.vo.WeixinInsuranceInfoVo;
 import com.mnbp.project.weixin.service.IWeixinService;
-import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 微信相关 Service实现
@@ -29,6 +31,10 @@ public class WeixinServiceImpl implements IWeixinService {
      */
     @Override
     public WeixinInsuranceInfoVo getInsuranceInfo(WeixinInsuranceInfoBo weixinInsuranceInfoBo) {
-        return customerMapper.getInsuranceInfo(weixinInsuranceInfoBo);
+        List<WeixinInsuranceInfoVo> list = customerMapper.getInsuranceInfo(weixinInsuranceInfoBo);
+        if (list != null) {
+            return list.get(0);
+        }
+        return null;
     }
 }

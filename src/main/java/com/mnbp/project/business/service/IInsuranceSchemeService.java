@@ -65,4 +65,20 @@ public interface IInsuranceSchemeService
      * @return
      */
     List<String> selectSchemeCodeList();
+
+    /**
+     * 删除客户，逻辑删除，修改del_flag的值为2
+     *
+     * @param ids ids
+     * @return
+     */
+    int updateByIdsForDel(Integer[] ids);
+
+    /**
+     * 根据方案代码查找方案
+     *
+     * @param insuranceScheme
+     * @return
+     */
+    InsuranceScheme selectBySchemeCode(InsuranceScheme insuranceScheme);
 }

@@ -2,18 +2,17 @@ package com.mnbp.project.business.service.impl;
 
 import java.util.*;
 
-import com.mnbp.common.enums.DictTypeEnum;
-import com.mnbp.common.enums.IdTypeEnum;
-import com.mnbp.common.utils.IdCardVerifyUtil;
-import com.mnbp.project.system.domain.SysDictData;
-import com.mnbp.project.system.service.impl.SysDictDataServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.mnbp.common.constant.Constants;
+import com.mnbp.common.enums.DelFlagEnum;
+import com.mnbp.common.enums.DictTypeEnum;
+import com.mnbp.common.enums.IdTypeEnum;
 import com.mnbp.common.exception.CustomException;
 import com.mnbp.common.utils.DateUtils;
+import com.mnbp.common.utils.IdCardVerifyUtil;
 import com.mnbp.common.utils.StringUtils;
 import com.mnbp.common.utils.poi.ExcelUtil;
 import com.mnbp.framework.web.domain.AjaxResult;
@@ -24,6 +23,8 @@ import com.mnbp.project.business.domain.vo.InsuranceInfoVo;
 import com.mnbp.project.business.mapper.CustomerMapper;
 import com.mnbp.project.business.service.ICustomerService;
 import com.mnbp.project.business.service.IInsuranceSchemeService;
+import com.mnbp.project.system.domain.SysDictData;
+import com.mnbp.project.system.service.impl.SysDictDataServiceImpl;
 
 /**
  * 客户Service业务层处理
@@ -67,33 +68,46 @@ public class CustomerServiceImpl implements ICustomerService {
     }
 
     /**
-     * 新增客户
-     * 
-     * @param customer
-     *            客户
-     * @return 结果
-     */
-    @Override
-    public int insertCustomer(Customer customer) {
-        customer.setCreateTime(DateUtils.getNowDate());
-        return customerMapper.insertCustomer(customer);
-    }
-
-    /**
      * 修改客户
      * 
      * @param customer
      *            客户
+     * @param operName 修改人
      * @return 结果
      */
     @Override
-    public int updateCustomer(Customer customer) {
-        customer.setUpdateTime(DateUtils.getNowDate());
-        return customerMapper.updateCustomer(customer);
+    public AjaxResult updateCustomer(Customer customer, String operName) {
+
+        // 校验方案代码
+        // 方案代码list
+        List<String> schemeCodeList = insuranceSchemeService.selectSchemeCodeList();
+        if (!schemeCodeList.contains(customer.getSchemeCode())) {
+            return AjaxResult.error("修改人员失败【" + customer.getSchemeCode() + "】此方案代码不存在");
+        }
+
+        // 校验身份证号
+        String idNumber = customer.getIdNumber();
+        Date examinatidonDate = customer.getExaminatidonDate();
+        if (IdTypeEnum.IDENTITY_CARD.getCode().equals(customer.getIdType())) {
+            if (!IdCardVerifyUtil.isValidIdNo(idNumber)) {
+                return AjaxResult.error("修改人员失败【" + customer.getIdNumber() + "】身份证不符合规范");
+            }
+            customer.setBirthdate(DateUtils.parseDate(idNumber.substring(6, 14)));
+        }
+        // 校验是否存在重复的记录（证件号和到检日期）
+        Customer customer1 = customerMapper.selectCustomerByIdNumber(idNumber, examinatidonDate);
+        if (customer1 != null && !customer.getId().equals(customer1.getId())) {
+            return AjaxResult.error("修改人员失败，证件号和到检日期存在重复记录");
+        }
+
+        customer.setUpdateTime(new Date());
+        customer.setUpdateBy(operName);
+
+        return customerMapper.updateCustomer(customer) > 0 ? AjaxResult.success() : AjaxResult.error();
     }
 
     /**
-     * 批量删除客户
+     * 批量删除客户，逻辑删除，修改del_flag的值
      * 
      * @param ids
      *            需要删除的客户ID
@@ -220,6 +234,67 @@ public class CustomerServiceImpl implements ICustomerService {
         dataMap.put("wrongCount", wrongCount);
 
         return AjaxResult.success(dataMap);
+    }
+
+    /**
+     * 删除客户，逻辑删除，修改del_flag的值为2
+     *
+     * @param ids
+     *            id
+     * @param operName
+     * @return
+     */
+    @Override
+    public int updateByIdsForDel(Integer[] ids, String operName) {
+        Date now = new Date();
+        int count = 0;
+        for (Integer id : ids) {
+            Customer customer = new Customer();
+            customer.setId(id);
+            customer.setDelFlag(DelFlagEnum.DELETED.getCode());
+            customer.setUpdateBy(operName);
+            customer.setUpdateTime(now);
+            count += customerMapper.updateCustomer(customer);
+        }
+
+        return count;
+    }
+
+    /**
+     * 新增人员（客户）
+     *
+     * @param customer
+     *            输入信息
+     * @param operName
+     *            创建人
+     * @return
+     */
+    @Override
+    public AjaxResult insertCustomer(Customer customer, String operName) {
+        // 校验方案代码
+        // 方案代码list
+        List<String> schemeCodeList = insuranceSchemeService.selectSchemeCodeList();
+        if (!schemeCodeList.contains(customer.getSchemeCode())) {
+            return AjaxResult.error("修改人员失败【" + customer.getSchemeCode() + "】此方案代码不存在");
+        }
+        // 校验身份证号
+        String idNumber = customer.getIdNumber();
+        Date examinatidonDate = customer.getExaminatidonDate();
+        if (IdTypeEnum.IDENTITY_CARD.getCode().equals(customer.getIdType())) {
+            if (!IdCardVerifyUtil.isValidIdNo(idNumber)) {
+                return AjaxResult.error("新增人员失败【" + customer.getIdNumber() + "】身份证不符合规范");
+            }
+            customer.setBirthdate(DateUtils.parseDate(idNumber.substring(6, 14)));
+        }
+        // 校验是否存在重复的记录（证件号和到检日期）
+        if (customerMapper.selectCustomerByIdNumber(idNumber, examinatidonDate) != null) {
+            return AjaxResult.error("新增人员失败，证件号和到检日期存在重复记录");
+        }
+
+        customer.setCreateTime(new Date());
+        customer.setCreateBy(operName);
+
+        return customerMapper.insertCustomer(customer) > 0 ? AjaxResult.success() : AjaxResult.error();
     }
 
     /**

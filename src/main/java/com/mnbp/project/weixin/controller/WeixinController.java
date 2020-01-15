@@ -1,12 +1,15 @@
 package com.mnbp.project.weixin.controller;
 
-import com.mnbp.framework.web.domain.AjaxResult;
-import com.mnbp.project.weixin.domain.bo.WeixinInsuranceInfoBo;
-import com.mnbp.project.weixin.service.IWeixinService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.mnbp.framework.web.domain.AjaxResult;
+import com.mnbp.project.weixin.domain.bo.WeixinInsuranceInfoBo;
+import com.mnbp.project.weixin.service.IWeixinService;
 
 /**
  * 微信 Controller
@@ -17,6 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/weixin")
 public class WeixinController {
+
+    /**
+     * 日志打印
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(WeixinController.class);
 
     @Autowired
     private IWeixinService weixinService;
@@ -30,6 +38,7 @@ public class WeixinController {
      */
     @GetMapping("/getInsuranceInfo")
     public AjaxResult getInsuranceInfo(WeixinInsuranceInfoBo weixinInsuranceInfoBo) {
+        LOGGER.info("微信承保信息查询，姓名：{}，证件号：{}", weixinInsuranceInfoBo.getCustomerName(), weixinInsuranceInfoBo.getIdNumber());
         return AjaxResult.success(weixinService.getInsuranceInfo(weixinInsuranceInfoBo));
     }
 }

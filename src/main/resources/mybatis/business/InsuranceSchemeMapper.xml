@@ -24,6 +24,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>  
             <if test="schemeCode != null  and schemeCode != ''"> and scheme_code = #{schemeCode}</if>
             <if test="schemeName != null  and schemeName != ''"> and scheme_name like concat('%', #{schemeName}, '%')</if>
+            <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
+            <if test="createBy != null  and createBy != ''">and create_by = #{createBy}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="updateBy != null  and updateBy != ''">and update_by = #{updateBy}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
         </where>
     </select>
     
@@ -84,6 +89,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select scheme_code
         from insurance_scheme
         where del_flag = '0'
+    </select>
+
+    <!-- 根据方案代码查询方案 -->
+    <select id="selectBySchemeCode" parameterType="InsuranceScheme" resultMap="InsuranceSchemeResult">
+        <include refid="selectInsuranceSchemeVo"/>
+        where scheme_code = #{schemeCode} and del_flag = '0'
+        <if test="id != null">and id != #{id}</if>
     </select>
 
 </mapper>

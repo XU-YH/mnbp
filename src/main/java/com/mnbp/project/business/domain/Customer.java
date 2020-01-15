@@ -2,6 +2,10 @@ package com.mnbp.project.business.domain;
 
 import java.util.Date;
 
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.Length;
+
 import com.mnbp.framework.aspectj.lang.annotation.Excel;
 import com.mnbp.framework.web.domain.BaseEntity;
 
@@ -22,13 +26,16 @@ public class Customer extends BaseEntity {
 
     /** 客户姓名 */
     @Excel(name = "姓名")
+    @NotNull(message = "姓名不能为空")
     private String customerName;
 
     /** 证件类型，数据字典 */
+    @NotNull(message = "证件类型不能为空")
     @Excel(name = "证件类型")
     private String idType;
 
     /** 证件号 */
+    @NotNull(message = "证件号不能为空")
     @Excel(name = "证件号")
     private String idNumber;
 
@@ -37,6 +44,7 @@ public class Customer extends BaseEntity {
     private String sex;
 
     /** 出生日期 */
+    @NotNull(message = "出生日期不能为空")
     @Excel(name = "出生日期", width = 30, dateFormat = "yyyy-MM-dd")
     private Date birthdate;
 
@@ -45,18 +53,22 @@ public class Customer extends BaseEntity {
     private String phonenumber;
 
     /** 到检日期（体检） */
+    @NotNull(message = "到检日期不能为空")
     @Excel(name = "到检日期", dateFormat = "yyyy-MM-dd")
     private Date examinatidonDate;
 
     /** 省份 */
+    @NotNull(message = "省份不能为空")
     @Excel(name = "省份")
     private String province;
 
     /** 城市 */
+    @NotNull(message = "城市不能为空")
     @Excel(name = "城市")
     private String city;
 
     /** 分公司名称 */
+    @NotNull(message = "分公司名称不能为空")
     @Excel(name = "分公司名称")
     private String branchName;
 
@@ -64,6 +76,8 @@ public class Customer extends BaseEntity {
     private String delFlag;
 
     /** 方案代码 */
+    @NotNull(message = "方案代码不能为空")
+    @Length(max = 8, min = 8, message = "方案代码长度必须为8位")
     @Excel(name = "方案代码")
     private String schemeCode;
 }
