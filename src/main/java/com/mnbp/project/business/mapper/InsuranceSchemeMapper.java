@@ -73,4 +73,12 @@ public interface InsuranceSchemeMapper
      * @return
      */
     InsuranceScheme selectBySchemeCode(InsuranceScheme insuranceScheme);
+
+    /**
+     * 根据方案id查询该方案下的人员
+     *
+     * @param id 方案id
+     * @return
+     */
+    int selectCustomerBySchemeId(Integer id);
 }

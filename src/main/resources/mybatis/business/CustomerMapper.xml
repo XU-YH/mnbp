@@ -163,7 +163,7 @@
     <select id="getInsuranceInfo" parameterType="WeixinInsuranceInfoBo" resultMap="WeixinInsuranceInfoVoResult">
         select c.customer_name, c.examinatidon_date, sc.clause_name, sc.compensation_limit
         from customer c, insurance_scheme s, scheme_clause sc
-        where c.customer_name = #{customerName} and c.id_number = #{idNumber} and c.del_flag = '0' and c.scheme_code = s.scheme_code and s.id = sc.scheme_id
+        where c.customer_name = #{customerName} and c.id_number = #{idNumber} and c.del_flag = '0' and c.scheme_code = s.scheme_code and s.id = sc.scheme_id and s.del_flag = '0'
         order by c.examinatidon_date desc
     </select>
 

@@ -72,7 +72,7 @@ public interface IInsuranceSchemeService
      * @param ids ids
      * @return
      */
-    int updateByIdsForDel(Integer[] ids);
+    String updateByIdsForDel(Integer[] ids);
 
     /**
      * 根据方案代码查找方案

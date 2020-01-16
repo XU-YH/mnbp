@@ -98,4 +98,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="id != null">and id != #{id}</if>
     </select>
 
+    <select id="selectCustomerBySchemeId" parameterType="Integer" resultType="Integer">
+        select count(*)
+        from insurance_scheme s, customer c
+        where s.id = #{id} and s.scheme_code = c.scheme_code and c.del_flag = '0'
+    </select>
+
 </mapper>

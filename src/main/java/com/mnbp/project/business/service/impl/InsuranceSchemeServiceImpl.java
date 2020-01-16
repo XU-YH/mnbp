@@ -106,12 +106,21 @@ public class InsuranceSchemeServiceImpl implements IInsuranceSchemeService {
      * @return
      */
     @Override
-    public int updateByIdsForDel(Integer[] ids) {
+    public String updateByIdsForDel(Integer[] ids) {
         // 获取当前登录人信息
         LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         Date now = new Date();
         int count = 0;
+        StringBuffer stringBuffer = new StringBuffer();
         for (Integer id : ids) {
+
+            InsuranceScheme scheme = insuranceSchemeMapper.selectInsuranceSchemeById(id);
+            // 校验此方案下是否有人员，若有则不删除
+            if (insuranceSchemeMapper.selectCustomerBySchemeId(id) > 0) {
+                stringBuffer.append(scheme.getSchemeCode() + "，");
+                continue;
+            }
+
             InsuranceScheme insuranceScheme = new InsuranceScheme();
             insuranceScheme.setId(id);
             insuranceScheme.setDelFlag(DelFlagEnum.DELETED.getCode());
@@ -120,7 +129,11 @@ public class InsuranceSchemeServiceImpl implements IInsuranceSchemeService {
             count += insuranceSchemeMapper.updateInsuranceScheme(insuranceScheme);
         }
 
-        return count;
+        if (stringBuffer.length() > 0) {
+            return "已删除" + count + "条，方案【" + stringBuffer.toString().substring(0, stringBuffer.length() - 1) + "】下有人员，不能删除";
+        }
+
+        return "已删除" + count + "条方案";
     }
 
     /**

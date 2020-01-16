@@ -98,7 +98,7 @@ public class InsuranceSchemeController extends BaseController {
     @Log(title = "方案", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Integer[] ids) {
-        return toAjax(insuranceSchemeService.updateByIdsForDel(ids));
+        return AjaxResult.success(insuranceSchemeService.updateByIdsForDel(ids));
     }
 
     /**
