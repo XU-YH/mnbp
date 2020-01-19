@@ -16,7 +16,7 @@ mnbp:
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
-  port: 8080
+  port: 92
   servlet:
     # 应用的访问路径
     context-path: /mnbp/
@@ -57,10 +57,12 @@ spring:
       enabled: true
   # redis 配置
   redis:
+    # 生成：30.4.32.90:9736
+    # 本地：localhost:6379
     # 地址
-    host: localhost
-    # 端口，默认为6379
-    port: 6379
+    host: 30.4.32.90
+    # 端口
+    port: 9736
     # 连接超时时间
     timeout: 10s
     lettuce:

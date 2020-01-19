@@ -5,8 +5,11 @@ spring:
         driverClassName: com.mysql.cj.jdbc.Driver
         druid:
             # 主库数据源
+            # 生产：30.4.32.98:3315/bussdb  remote  Picc135!
+            # 测试：30.4.32.104:3315/bussdb  remote remote123!
+            # 本地： localhost:3306/mnbp  root root
             master:
-                url: jdbc:mysql://localhost:3306/ry-vue?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                url: jdbc:mysql://localhost:3306/mnbp?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
                 username: root
                 password: root
             # 从库数据源

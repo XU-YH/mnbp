@@ -32,7 +32,7 @@ public class WeixinServiceImpl implements IWeixinService {
     @Override
     public WeixinInsuranceInfoVo getInsuranceInfo(WeixinInsuranceInfoBo weixinInsuranceInfoBo) {
         List<WeixinInsuranceInfoVo> list = customerMapper.getInsuranceInfo(weixinInsuranceInfoBo);
-        if (list != null) {
+        if (list != null && list.size() > 0) {
             return list.get(0);
         }
         return null;

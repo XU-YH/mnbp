@@ -327,9 +327,6 @@ public class CustomerServiceImpl implements ICustomerService {
         if (examinatidonDate == null) {
             sb.append("到检日期不能为空；");
         }
-        if (StringUtils.isEmpty(customer.getPhonenumber())) {
-            sb.append("联系电话不能为空");
-        }
         if (StringUtils.isEmpty(customer.getBranchName())) {
             sb.append("分公司名称不能为空；");
         }
