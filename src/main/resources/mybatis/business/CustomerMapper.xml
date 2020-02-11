@@ -181,8 +181,9 @@
     </insert>
 
     <!-- 根据证件号和到检日期查询客户信息 -->
-    <select id="selectCustomerByIdNumber" resultMap="CustomerResult">
-        <include refid="selectCustomerVo"/>
+    <select id="selectCustomerByIdNumber" resultType="Integer">
+        select id
+        from customer
         where id_number = #{idNumber} and examinatidon_date = #{examinatidonDate} and del_flag = '0'
     </select>
 

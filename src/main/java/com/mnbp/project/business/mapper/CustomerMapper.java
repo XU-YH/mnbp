@@ -98,5 +98,5 @@ public interface CustomerMapper
      * @param examinatidonDate 到检日期
      * @return
      */
-    Customer selectCustomerByIdNumber(@Param("idNumber") String idNumber, @Param("examinatidonDate") Date examinatidonDate);
+    Integer selectCustomerByIdNumber(@Param("idNumber") String idNumber, @Param("examinatidonDate") Date examinatidonDate);
 }

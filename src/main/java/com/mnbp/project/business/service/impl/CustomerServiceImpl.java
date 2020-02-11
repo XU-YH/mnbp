@@ -95,8 +95,8 @@ public class CustomerServiceImpl implements ICustomerService {
             customer.setBirthdate(DateUtils.parseDate(idNumber.substring(6, 14)));
         }
         // 校验是否存在重复的记录（证件号和到检日期）
-        Customer customer1 = customerMapper.selectCustomerByIdNumber(idNumber, examinatidonDate);
-        if (customer1 != null && !customer.getId().equals(customer1.getId())) {
+        Integer customerId = customerMapper.selectCustomerByIdNumber(idNumber, examinatidonDate);
+        if (customerId != null && !customer.getId().equals(customerId)) {
             return AjaxResult.error("修改人员失败，证件号和到检日期存在重复记录");
         }
 
@@ -190,9 +190,9 @@ public class CustomerServiceImpl implements ICustomerService {
             rightCustomerSet.add(customer);
 
             // 更新数据
-            Customer oldCustomer = customerMapper.selectCustomerByIdNumber(idNumber, examinatidonDate);
-            if (oldCustomer != null) {
-                customer.setId(oldCustomer.getId());
+            Integer oldCustomerId = customerMapper.selectCustomerByIdNumber(idNumber, examinatidonDate);
+            if (oldCustomerId != null) {
+                customer.setId(oldCustomerId);
                 customer.setUpdateBy(operName);
                 customer.setUpdateTime(now);
                 customerMapper.updateCustomer(customer);
@@ -334,6 +334,15 @@ public class CustomerServiceImpl implements ICustomerService {
             sb.append("方案代码不能为空；");
         } else if (!schemeCodeList.contains(customer.getSchemeCode())) {
             sb.append("无此方案代码；");
+        }
+        if (StringUtils.isEmpty(customer.getProvince())) {
+            sb.append("省份不能为空；");
+        }
+        if (StringUtils.isEmpty(customer.getCity())) {
+            sb.append("城市不能为空；");
+        }
+        if (StringUtils.isEmpty(customer.getBranchName())) {
+            sb.append("分公司名不能为空；");
         }
         String idType = customer.getIdType();
         if (StringUtils.isEmpty(idType)) {
