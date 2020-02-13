@@ -99,4 +99,13 @@ public interface CustomerMapper
      * @return
      */
     Integer selectCustomerByIdNumber(@Param("idNumber") String idNumber, @Param("examinatidonDate") Date examinatidonDate);
+
+    /**
+     * 人员导入数据库已有的数据，先将所有数据插入，后修改数据库中存在两条重复记录（证件号和到检日期都相同）的旧数据
+     *
+     * @param operName 操作人名
+     * @param time 修改时间
+     * @return
+     */
+    int updateRepeatCustomer(@Param("operName") String operName, @Param("time") Date time);
 }

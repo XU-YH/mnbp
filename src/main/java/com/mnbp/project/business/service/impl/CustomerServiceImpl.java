@@ -25,6 +25,7 @@ import com.mnbp.project.business.service.ICustomerService;
 import com.mnbp.project.business.service.IInsuranceSchemeService;
 import com.mnbp.project.system.domain.SysDictData;
 import com.mnbp.project.system.service.impl.SysDictDataServiceImpl;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 客户Service业务层处理
@@ -152,12 +153,13 @@ public class CustomerServiceImpl implements ICustomerService {
      * @return
      */
     @Override
+    @Transactional
     public AjaxResult importUser(List<Customer> customerList, String operName) {
         if (StringUtils.isNull(customerList) || customerList.size() == 0) {
             throw new CustomException("导入人员数据不能为空！！！");
         }
         // 当前时间
-        Date now = new Date();
+        Date time = new Date();
         // 新增数量
         int insertCount = 0;
         // 错误数量
@@ -174,7 +176,7 @@ public class CustomerServiceImpl implements ICustomerService {
         List<Customer> insertDataList = new ArrayList<>();
         // 正确数据
         Set<Customer> rightCustomerSet = new TreeSet<>((o1, o2) -> {
-            int num = o1.getIdNumber().compareTo(o2.getIdNumber());
+            int num = o1.getIdNumber().compareToIgnoreCase(o2.getIdNumber());
             return num == 0 ? o1.getExaminatidonDate().compareTo(o2.getExaminatidonDate()) : num;
         });
 
@@ -190,19 +192,19 @@ public class CustomerServiceImpl implements ICustomerService {
             rightCustomerSet.add(customer);
 
             // 更新数据
-            Integer oldCustomerId = customerMapper.selectCustomerByIdNumber(idNumber, examinatidonDate);
-            if (oldCustomerId != null) {
-                customer.setId(oldCustomerId);
-                customer.setUpdateBy(operName);
-                customer.setUpdateTime(now);
-                customerMapper.updateCustomer(customer);
-                updateCount++;
-                continue;
-            }
+            // Integer oldCustomerId = customerMapper.selectCustomerByIdNumber(idNumber, examinatidonDate);
+            // if (oldCustomerId != null) {
+            //     customer.setId(oldCustomerId);
+            //     customer.setUpdateBy(operName);
+            //     customer.setUpdateTime(now);
+            //     customerMapper.updateCustomer(customer);
+            //     updateCount++;
+            //     continue;
+            // }
 
             // 新增数据
             customer.setCreateBy(operName);
-            customer.setCreateTime(now);
+            customer.setCreateTime(time);
             insertDataList.add(customer);
             // 超过限定数量插入一次
             if (insertDataList.size() >= Constants.BATCH_COUNT) {
@@ -216,6 +218,10 @@ public class CustomerServiceImpl implements ICustomerService {
         if (insertDataList.size() > 0) {
             insertCount += customerMapper.batchInsertCustomer(insertDataList);
         }
+
+        // 人员导入数据库已有的数据，先将所有数据插入，后修改数据库中存在两条重复记录（证件号和到检日期都相同）的旧数据
+        updateCount = customerMapper.updateRepeatCustomer(operName, time);
+
         // 错误数据以excel表形式返给前端，提供用户下载
         String fileName = "";
         if (wrongDataList.size() > 0) {
@@ -229,7 +235,7 @@ public class CustomerServiceImpl implements ICustomerService {
         // 返回结果封装
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("fileName", fileName);
-        dataMap.put("insertCount", insertCount);
+        dataMap.put("insertCount", insertCount - updateCount);
         dataMap.put("updateCount", updateCount);
         dataMap.put("wrongCount", wrongCount);
 
@@ -246,14 +252,14 @@ public class CustomerServiceImpl implements ICustomerService {
      */
     @Override
     public int updateByIdsForDel(Integer[] ids, String operName) {
-        Date now = new Date();
+        Date time = new Date();
         int count = 0;
         for (Integer id : ids) {
             Customer customer = new Customer();
             customer.setId(id);
             customer.setDelFlag(DelFlagEnum.DELETED.getCode());
             customer.setUpdateBy(operName);
-            customer.setUpdateTime(now);
+            customer.setUpdateTime(time);
             count += customerMapper.updateCustomer(customer);
         }
 
@@ -344,6 +350,9 @@ public class CustomerServiceImpl implements ICustomerService {
         if (StringUtils.isEmpty(customer.getBranchName())) {
             sb.append("分公司名不能为空；");
         }
+        if (StringUtils.isNotEmpty(customer.getPhonenumber()) && customer.getPhonenumber().length() > 20) {
+            sb.append("联系电话太长了；");
+        }
         String idType = customer.getIdType();
         if (StringUtils.isEmpty(idType)) {
             sb.append("证件类型不能为空；");
@@ -360,6 +369,8 @@ public class CustomerServiceImpl implements ICustomerService {
             } else {
                 if (StringUtils.isEmpty(idNumber)) {
                     sb.append("证件号不能为空；");
+                } else if (idNumber.length() > 20) {
+                    sb.append("证件号太长了；");
                 } else if (IdTypeEnum.IDENTITY_CARD.getCode().equals(idType)) {
                     // 校验身份证是否符合规范
                     if (IdCardVerifyUtil.isValidIdNo(idNumber)) {

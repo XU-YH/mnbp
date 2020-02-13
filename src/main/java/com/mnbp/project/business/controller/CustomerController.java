@@ -162,7 +162,7 @@ public class CustomerController extends BaseController {
             customerList = util.importExcel(file.getInputStream());
         } catch (Exception e) {
             LOGGER.error("人员导入失败，【CustomerController.importData()】，msg：", e);
-            return AjaxResult.error("数据导入失败，请检查EXCEL是否规范或是找系统后台解决。");
+            return AjaxResult.error("数据导入失败，请检查EXCEL表" + e.getMessage());
         }
 
         // 获取当前登录人信息

@@ -191,65 +191,46 @@ public class ExcelUtil<T>
                     Field field = fieldsMap.get(entry.getKey());
                     // 取得类型,并根据对象类型设置值.
                     Class<?> fieldType = field.getType();
-                    if (String.class == fieldType)
-                    {
-                        String s = Convert.toStr(val);
-                        if (StringUtils.endsWith(s, ".0"))
-                        {
-                            val = StringUtils.substringBefore(s, ".0");
-                        }
-                        else
-                        {
-                            val = Convert.toStr(val);
-                        }
-                    }
-                    else if ((Integer.TYPE == fieldType) || (Integer.class == fieldType))
-                    {
-                        val = Convert.toInt(val);
-                    }
-                    else if ((Long.TYPE == fieldType) || (Long.class == fieldType))
-                    {
-                        val = Convert.toLong(val);
-                    }
-                    else if ((Double.TYPE == fieldType) || (Double.class == fieldType))
-                    {
-                        val = Convert.toDouble(val);
-                    }
-                    else if ((Float.TYPE == fieldType) || (Float.class == fieldType))
-                    {
-                        val = Convert.toFloat(val);
-                    }
-                    else if (BigDecimal.class == fieldType)
-                    {
-                        val = Convert.toBigDecimal(val);
-                    }
-                    else if (Date.class == fieldType)
-                    {
-                        if (val instanceof String)
-                        {
-                            if (val != null)
-                            {
-                                val = org.apache.commons.lang3.time.DateUtils.parseDate(val.toString(), DateUtils.parsePatterns);
+
+                    try {
+                        if (String.class == fieldType) {
+                            String s = Convert.toStr(val);
+                            if (StringUtils.endsWith(s, ".0")) {
+                                val = StringUtils.substringBefore(s, ".0");
+                            } else {
+                                val = Convert.toStr(val);
+                            }
+                        } else if ((Integer.TYPE == fieldType) || (Integer.class == fieldType)) {
+                            val = Convert.toInt(val);
+                        } else if ((Long.TYPE == fieldType) || (Long.class == fieldType)) {
+                            val = Convert.toLong(val);
+                        } else if ((Double.TYPE == fieldType) || (Double.class == fieldType)) {
+                            val = Convert.toDouble(val);
+                        } else if ((Float.TYPE == fieldType) || (Float.class == fieldType)) {
+                            val = Convert.toFloat(val);
+                        } else if (BigDecimal.class == fieldType) {
+                            val = Convert.toBigDecimal(val);
+                        } else if (Date.class == fieldType) {
+                            if (val instanceof String) {
+                                if (StringUtils.isNotEmpty(val.toString())) {
+                                    val = org.apache.commons.lang3.time.DateUtils.parseDate(val.toString(), DateUtils.parsePatterns);
+                                }
+                            } else if (val instanceof Double) {
+                                val = DateUtil.getJavaDate((Double) val);
                             }
                         }
-                        else if (val instanceof Double)
-                        {
-                            val = DateUtil.getJavaDate((Double) val);
+                        if (StringUtils.isNotNull(fieldType)) {
+                            Excel attr = field.getAnnotation(Excel.class);
+                            String propertyName = field.getName();
+                            if (StringUtils.isNotEmpty(attr.targetAttr())) {
+                                propertyName = field.getName() + "." + attr.targetAttr();
+                            } else if (StringUtils.isNotEmpty(attr.readConverterExp())) {
+                                val = reverseByExp(String.valueOf(val), attr.readConverterExp());
+                            }
+                            ReflectUtils.invokeSetter(entity, propertyName, val);
                         }
-                    }
-                    if (StringUtils.isNotNull(fieldType))
-                    {
-                        Excel attr = field.getAnnotation(Excel.class);
-                        String propertyName = field.getName();
-                        if (StringUtils.isNotEmpty(attr.targetAttr()))
-                        {
-                            propertyName = field.getName() + "." + attr.targetAttr();
-                        }
-                        else if (StringUtils.isNotEmpty(attr.readConverterExp()))
-                        {
-                            val = reverseByExp(String.valueOf(val), attr.readConverterExp());
-                        }
-                        ReflectUtils.invokeSetter(entity, propertyName, val);
+                    } catch (Exception e) {
+                        throw new CustomException("第" + (i + 1) + "行的" + "第" + field.getName() + "列", e);
                     }
                 }
                 list.add(entity);

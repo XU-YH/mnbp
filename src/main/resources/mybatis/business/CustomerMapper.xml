@@ -187,4 +187,28 @@
         where id_number = #{idNumber} and examinatidon_date = #{examinatidonDate} and del_flag = '0'
     </select>
 
+    <!-- 人员导入数据库已有的数据，先将所有数据插入，后修改数据库中存在两条重复记录（证件号和到检日期都相同）的旧数据 -->
+    <update id="updateRepeatCustomer">
+        UPDATE customer
+        SET del_flag = '2', update_time = #{time}, update_by = #{operName}
+        WHERE
+            id IN (
+                SELECT
+                    a.minId
+                FROM
+                    (
+                        SELECT
+                            min(id) minId
+                        FROM
+                            customer
+                        WHERE
+                            del_flag = '0'
+                        GROUP BY
+                            id_number,
+                            examinatidon_date
+                        HAVING
+                            count(id_number) > 1
+                    ) a
+            )
+    </update>
 </mapper>
