@@ -1,15 +1,5 @@
 package com.mnbp.project.business.controller;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.mnbp.common.enums.DelFlagEnum;
 import com.mnbp.common.utils.ServletUtils;
 import com.mnbp.common.utils.poi.ExcelUtil;
@@ -24,6 +14,23 @@ import com.mnbp.project.business.domain.Customer;
 import com.mnbp.project.business.domain.bo.InsuranceInfoBo;
 import com.mnbp.project.business.domain.vo.InsuranceInfoVo;
 import com.mnbp.project.business.service.ICustomerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * 客户Controller
@@ -146,29 +153,24 @@ public class CustomerController extends BaseController {
     }
 
     /**
-     * 导入客户数据
-     *
-     * @param file
-     *            excel表
-     * @return
+     * 导入客户数据功能重写
      */
     @Log(title = "用户管理", businessType = BusinessType.IMPORT)
     @PreAuthorize("@ss.hasPermi('business:customer:import')")
     @PostMapping("/importData")
-    public AjaxResult importData(MultipartFile file, boolean updateSupport) {
-        ExcelUtil<Customer> util = new ExcelUtil<>(Customer.class);
-        List<Customer> customerList = null;
-        try {
-            customerList = util.importExcel(file.getInputStream());
-        } catch (Exception e) {
-            LOGGER.error("人员导入失败，【CustomerController.importData()】，msg：", e);
-            return AjaxResult.error("数据导入失败，请检查EXCEL表" + e.getMessage());
-        }
-
+    public AjaxResult importData1(MultipartFile file, boolean updateSupport) {
         // 获取当前登录人信息
         LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
         String operName = loginUser.getUsername();
 
-        return customerService.importUser(customerList, operName);
+        AjaxResult ajaxResult;
+
+        try {
+            ajaxResult = customerService.importUser(file, operName);
+        } catch (IOException e) {
+            LOGGER.error("人员导入失败，【CustomerController.importData()】，msg：", e);
+            return AjaxResult.error("数据导入失败");
+        }
+        return ajaxResult;
     }
 }

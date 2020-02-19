@@ -8,10 +8,10 @@ mnbp:
   copyrightYear: 2019
   # 实例演示开关
   demoEnabled: false
-  # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
+  # 文件路径 示例（ Windows配置D:/mnbp/uploadPath，Linux配置 /home/project/mnbp/uploadPath）
   profile: D:/upload/mnbp
   # 获取ip地址开关
-  addressEnabled: true
+  addressEnabled: false
 
 # 开发环境配置
 server:
@@ -32,7 +32,7 @@ server:
 # 日志配置
 logging:
   level:
-    com.mnbp: debug
+    com.mnbp: info
     org.springframework: warn
 
 # Spring配置
@@ -48,7 +48,7 @@ spring:
      multipart:
        max-file-size:  50MB
        # 设置总上传的文件大小
-       max-request-size:  100MB
+       max-request-size:  50MB
   # 服务模块
   devtools:
     restart:
@@ -56,14 +56,14 @@ spring:
       enabled: true
   # redis 配置
   redis:
-    # 生成：30.4.32.90:9736
+    # 生产：30.4.32.90:9736
     # 本地：localhost:6379
     # 地址
-    host: 30.4.32.90
+    host: localhost
     # 端口
-    port: 9736
+    port: 6379
     # 连接超时时间
-    timeout: 10s
+    timeout: 20s
     lettuce:
       pool:
         # 连接池中的最小空闲连接

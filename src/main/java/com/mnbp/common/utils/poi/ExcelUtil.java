@@ -627,7 +627,7 @@ public class ExcelUtil<T>
     /**
      * 编码文件名
      */
-    public String encodingFilename(String filename)
+    public static String encodingFilename(String filename)
     {
         filename = UUID.randomUUID().toString() + "_" + filename + ".xlsx";
         return filename;
@@ -638,7 +638,7 @@ public class ExcelUtil<T>
      * 
      * @param filename 文件名称
      */
-    public String getAbsoluteFile(String filename)
+    public static String getAbsoluteFile(String filename)
     {
         String downloadPath = RuoYiConfig.getDownloadPath() + filename;
         File desc = new File(downloadPath);
