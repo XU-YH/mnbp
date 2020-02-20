@@ -55,7 +55,6 @@ public class Customer extends BaseEntity {
      * 出生日期
      */
     @ExcelProperty("出生日期")
-    @NotNull(message = "出生日期不能为空")
     private Date birthdate;
 
     /**
