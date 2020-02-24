@@ -122,4 +122,11 @@ public interface CustomerMapper {
     CustomerDto selectRepeatCustomer(@Param("idNumber") String idNumber,
             @Param("examinatidonDate") Date examinatidonDate, @Param("createBy") String createBy,
             @Param("createTime") Date createTime);
+
+    /**
+     * 人员导入数据库已有的数据，先将所有数据插入，后删除数据库中存在两条重复记录（证件号和到检日期都相同）的旧数据
+     *
+     * @return
+     */
+    int deleteRepeatCustomer();
 }

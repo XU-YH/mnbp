@@ -204,7 +204,7 @@ public class CustomerServiceImpl implements ICustomerService {
                         wrongDataList, dataMap)).sheet().doRead();
 
         // 人员导入数据库已有的数据，先将所有数据插入，后修改数据库中存在两条重复记录（证件号和到检日期都相同）的旧数据
-        updateCount = customerMapper.updateRepeatCustomer(operName, time);
+        updateCount = customerMapper.deleteRepeatCustomer();
 
         // 错误数据以excel表形式返给前端，提供用户下载
         String fileName = "";

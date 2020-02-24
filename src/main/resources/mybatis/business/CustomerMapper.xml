@@ -235,4 +235,30 @@
         from customer
         where id_number = #{idNumber} and examinatidon_date = #{examinatidonDate} and create_by = #{createBy} and create_time = #{createTime}
     </select>
+
+    <!-- 人员导入数据库已有的数据，先将所有数据插入，后删除数据库中存在两条重复记录（证件号和到检日期都相同）的旧数据 -->
+    <delete id="deleteRepeatCustomer">
+        DELETE
+        FROM
+            customer
+        WHERE
+            id IN (
+                SELECT
+                    a.minId
+                FROM
+                    (
+                        SELECT
+                            min(id) minId
+                        FROM
+                            customer
+                        WHERE
+                            del_flag = '0'
+                        GROUP BY
+                            id_number,
+                            examinatidon_date
+                        HAVING
+                            count(id_number) > 1
+                    ) a
+            )
+    </delete>
 </mapper>

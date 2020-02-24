@@ -65,9 +65,9 @@ public class CustomerExceptionListener extends AnalysisEventListener<Customer> {
     public CustomerExceptionListener() {
     }
 
-    public CustomerExceptionListener(String operName, Date time, ICustomerService customerService, CustomerMapper customerMapper,
-            List<String> schemeCodeList, List<SysDictData> dictDataList, List<CustomerDto> wrongDataList,
-            Map<String, Object> dataMap) {
+    public CustomerExceptionListener(String operName, Date time, ICustomerService customerService,
+            CustomerMapper customerMapper, List<String> schemeCodeList, List<SysDictData> dictDataList,
+            List<CustomerDto> wrongDataList, Map<String, Object> dataMap) {
         this.operName = operName;
         this.time = time;
         this.customerService = customerService;
@@ -144,6 +144,7 @@ public class CustomerExceptionListener extends AnalysisEventListener<Customer> {
 
         // 重复代表着两条以上的相同（证件号和到检日期）数据，由于采用的是分批插入数据库，所以会造成：假定一定存在两条重复数据，第一条数据已经插入到数据库中，第二条数据还没有解析到。
         // 这里的做法是：重复数据的第一条数据向插入到数据库中，全部解析完成后，根据第二条数据的信息查出第一条数据，将其添加到错误数据list并删除数据
+        List<Integer> ids = new ArrayList<>(10);
         for (CustomerRepeatBo repeatCustomer : repeatCustomerSet) {
             // 找出重复数据
             CustomerDto customerDto = customerMapper
@@ -151,7 +152,10 @@ public class CustomerExceptionListener extends AnalysisEventListener<Customer> {
                             time);
             customerDto.setFailureCause("重复数据；");
             wrongDataList.add(customerDto);
-            insertCount -= customerMapper.deleteCustomerById(customerDto.getId());
+            ids.add(customerDto.getId());
+        }
+        if (ids.size() > 0) {
+            insertCount -= customerMapper.deleteCustomerByIds(ids.toArray(new Integer[ids.size()]));
         }
 
         dataMap.put("insertCount", insertCount);
