@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.mnbp.project.business.domain.Customer;
 import com.mnbp.project.business.domain.bo.InsuranceInfoBo;
+import com.mnbp.project.business.domain.dto.CustomerDto;
 import com.mnbp.project.business.domain.vo.InsuranceInfoVo;
 import com.mnbp.project.weixin.domain.bo.WeixinInsuranceInfoBo;
 import com.mnbp.project.weixin.domain.vo.WeixinInsuranceInfoVo;
@@ -13,12 +14,11 @@ import org.apache.ibatis.annotations.Param;
 
 /**
  * 客户Mapper接口
- * 
+ *
  * @author xuyinhui
  * @date 2019-12-26
  */
-public interface CustomerMapper
-{
+public interface CustomerMapper {
     /**
      * 查询客户
      *
@@ -94,18 +94,32 @@ public interface CustomerMapper
     /**
      * 根据证件号和到检日期查询客户信息
      *
-     * @param idNumber 证件号
+     * @param idNumber         证件号
      * @param examinatidonDate 到检日期
      * @return
      */
-    Integer selectCustomerByIdNumber(@Param("idNumber") String idNumber, @Param("examinatidonDate") Date examinatidonDate);
+    Integer selectCustomerByIdNumber(@Param("idNumber") String idNumber,
+            @Param("examinatidonDate") Date examinatidonDate);
 
     /**
      * 人员导入数据库已有的数据，先将所有数据插入，后修改数据库中存在两条重复记录（证件号和到检日期都相同）的旧数据
      *
      * @param operName 操作人名
-     * @param time 修改时间
+     * @param time     修改时间
      * @return
      */
     int updateRepeatCustomer(@Param("operName") String operName, @Param("time") Date time);
+
+    /**
+     * 找出重复数据
+     *
+     * @param idNumber         证件号
+     * @param examinatidonDate 到检日期
+     * @param createBy         插入人
+     * @param createTime       插入时间
+     * @return
+     */
+    CustomerDto selectRepeatCustomer(@Param("idNumber") String idNumber,
+            @Param("examinatidonDate") Date examinatidonDate, @Param("createBy") String createBy,
+            @Param("createTime") Date createTime);
 }

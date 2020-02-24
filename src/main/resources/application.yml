@@ -9,7 +9,7 @@ mnbp:
   # 实例演示开关
   demoEnabled: false
   # 文件路径 示例（ Windows配置D:/mnbp/uploadPath，Linux配置 /home/project/mnbp/uploadPath）
-  profile: D:/upload/mnbp
+  profile: /home/project/mnbp/uploadPath
   # 获取ip地址开关
   addressEnabled: false
 

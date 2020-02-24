@@ -1,5 +1,6 @@
 package com.mnbp.project.business.domain;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.mnbp.common.converter.SexStringConverter;
 import com.mnbp.framework.web.domain.BaseEntity;
@@ -22,6 +23,7 @@ public class Customer extends BaseEntity {
     /**
      * ID
      */
+    @ExcelIgnore
     private Integer id;
 
     /**
@@ -94,6 +96,7 @@ public class Customer extends BaseEntity {
     /**
      * 删除标志（0代表存在 2代表删除）
      */
+    @ExcelIgnore
     private String delFlag;
 
     /**

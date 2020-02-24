@@ -1,5 +1,6 @@
 package com.mnbp.project.business.domain.dto;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.format.DateTimeFormat;
 import com.mnbp.common.converter.SexStringConverter;
@@ -18,6 +19,10 @@ import java.util.Date;
 public class CustomerDto implements Serializable {
 
     private static final long serialVersionUID = 8576047255796373015L;
+
+    /** id */
+    @ExcelIgnore
+    private Integer id;
 
     /** 客户姓名 */
     @ExcelProperty("姓名")

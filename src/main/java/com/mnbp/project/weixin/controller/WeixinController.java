@@ -1,5 +1,7 @@
 package com.mnbp.project.weixin.controller;
 
+import com.mnbp.common.utils.ServletUtils;
+import com.mnbp.common.utils.ip.IpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,9 @@ public class WeixinController {
     @GetMapping("/getInsuranceInfo")
     public AjaxResult getInsuranceInfo(WeixinInsuranceInfoBo weixinInsuranceInfoBo) {
         LOGGER.info("微信承保信息查询，姓名：{}，证件号：{}", weixinInsuranceInfoBo.getCustomerName(), weixinInsuranceInfoBo.getIdNumber());
+        // 请求的地址
+        String ip = IpUtils.getIpAddr(ServletUtils.getRequest());
+        LOGGER.info(ip);
         return AjaxResult.success(weixinService.getInsuranceInfo(weixinInsuranceInfoBo));
     }
 }

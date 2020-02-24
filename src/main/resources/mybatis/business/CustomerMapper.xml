@@ -24,6 +24,21 @@
         <result property="updateTime" column="update_time"/>
     </resultMap>
 
+    <resultMap type="CustomerDto" id="CustomerDtoResult">
+        <result property="id" column="id"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="idType" column="id_type"/>
+        <result property="idNumber" column="id_number"/>
+        <result property="sex" column="sex"/>
+        <result property="birthdate" column="birthdate"/>
+        <result property="phonenumber" column="phonenumber"/>
+        <result property="examinatidonDate" column="examinatidon_date"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="branchName" column="branch_name"/>
+        <result property="schemeCode" column="scheme_code"/>
+    </resultMap>
+
     <resultMap type="InsuranceInfoVo" id="InsuranceInfoVoResult">
         <result property="customerName" column="customer_name"/>
         <result property="idNumber" column="id_number"/>
@@ -48,7 +63,9 @@
     <select id="selectCustomerList" parameterType="Customer" resultMap="CustomerResult">
         <include refid="selectCustomerVo"/>
         <where>
-            <if test="customerName != null  and customerName != ''">and customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="customerName != null  and customerName != ''">and customer_name like concat('%', #{customerName},
+                '%')
+            </if>
             <if test="idType != null  and idType != ''">and id_type = #{idType}</if>
             <if test="idNumber != null  and idNumber != ''">and id_number = #{idNumber}</if>
             <if test="sex != null  and sex != ''">and sex = #{sex}</if>
@@ -57,7 +74,8 @@
             <if test="examinatidonDate != null ">and examinatidon_date = #{examinatidonDate}</if>
             <if test="province != null  and province != ''">and province = #{province}</if>
             <if test="city != null  and city != ''">and city = #{city}</if>
-            <if test="branchName != null  and branchName != ''">and branch_name like concat('%', #{branchName}, '%')</if>
+            <if test="branchName != null  and branchName != ''">and branch_name like concat('%', #{branchName}, '%')
+            </if>
             <if test="delFlag != null  and delFlag != ''">and del_flag = #{delFlag}</if>
             <if test="schemeCode != null  and schemeCode != ''">and scheme_code = #{schemeCode}</if>
             <if test="createBy != null  and createBy != ''">and create_by = #{createBy}</if>
@@ -141,7 +159,7 @@
     </delete>
 
     <delete id="deleteCustomerByIds" parameterType="String">
-        delete from customer where id in 
+        delete from customer where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>
@@ -152,11 +170,11 @@
         select c.customer_name, c.id_number, c.branch_name, s.scheme_name, s.id scheme_id
         from customer c left join insurance_scheme s on c.scheme_code = s.scheme_code
         where
-            c.del_flag = '0'
-            <if test="customerName != null  and customerName != ''">and c.customer_name like concat('%',
-                #{customerName}, '%')
-            </if>
-            <if test="idNumber != null  and idNumber != ''">and c.id_number = #{idNumber}</if>
+        c.del_flag = '0'
+        <if test="customerName != null  and customerName != ''">and c.customer_name like concat('%',
+            #{customerName}, '%')
+        </if>
+        <if test="idNumber != null  and idNumber != ''">and c.id_number = #{idNumber}</if>
     </select>
 
     <!-- 查询承保信息 -->
@@ -211,4 +229,10 @@
                     ) a
             )
     </update>
+
+    <select id="selectRepeatCustomer" resultMap="CustomerDtoResult">
+        select id, customer_name, id_type, id_number, sex, birthdate, phonenumber, examinatidon_date, province, city, branch_name, scheme_code
+        from customer
+        where id_number = #{idNumber} and examinatidon_date = #{examinatidonDate} and create_by = #{createBy} and create_time = #{createTime}
+    </select>
 </mapper>

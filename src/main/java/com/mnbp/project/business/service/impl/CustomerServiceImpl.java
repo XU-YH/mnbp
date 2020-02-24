@@ -171,7 +171,7 @@ public class CustomerServiceImpl implements ICustomerService {
     }
 
     /**
-     * 导入人员（客户）数据，是否为重复数据以证件号和到检日期是否相同为准，采用第一条数据。数据库中已有数据则更新该条数据
+     * 导入人员（客户）数据，excel表中若有重复数据，都标记为错误数据。是否为重复数据以证件号和到检日期是否相同为准。数据库中已有数据则更新该条数据
      *
      * @param file     导入文件
      * @param operName 操作人
@@ -183,7 +183,8 @@ public class CustomerServiceImpl implements ICustomerService {
         LOGGER.info("----------------- 人员导入Excel开始导入，操作人：{} -----------------", operName);
         Map<String, Object> dataMap = new HashMap<>();
         // 当前时间
-        Date time = new Date();
+        String timeStr = DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, new Date());
+        Date time = DateUtils.parseDate(timeStr);
         // 新增数量
         int insertCount = 0;
         // 错误数量
@@ -199,7 +200,7 @@ public class CustomerServiceImpl implements ICustomerService {
 
         // excel表读取数据 & 新增数据
         EasyExcel.read(file.getInputStream(), Customer.class,
-                new CustomerExceptionListener(operName, this, customerMapper, schemeCodeList, dictDataList,
+                new CustomerExceptionListener(operName, time, this, customerMapper, schemeCodeList, dictDataList,
                         wrongDataList, dataMap)).sheet().doRead();
 
         // 人员导入数据库已有的数据，先将所有数据插入，后修改数据库中存在两条重复记录（证件号和到检日期都相同）的旧数据
@@ -223,6 +224,8 @@ public class CustomerServiceImpl implements ICustomerService {
         dataMap.put("updateCount", updateCount);
         dataMap.put("wrongCount", wrongCount);
 
+        LOGGER.info("----------------- 人员导入excel表完成! 新增{}，修改{}，错误{}。 -----------------", dataMap.get("insertCount"),
+                updateCount, wrongCount);
         return AjaxResult.success(dataMap);
 
     }
@@ -265,16 +268,18 @@ public class CustomerServiceImpl implements ICustomerService {
     /**
      * 人员导入数据校验： 姓名、证件类型、证件号、性别、出生日期、联系电话、到检日期、方案代码不能为空。 证件号若为身份证，以从证件号中获取出生日期为准 证件号和到检日期组成唯一索引，重复数据为错误数据
      *
-     * @param customer         人员信息
-     * @param schemeCodeList   方案代码
-     * @param dictDataList     证件类型
-     * @param wrongDataList    错误数据
-     * @param rightCustomerSet 正确数据
+     * @param customer          人员信息
+     * @param schemeCodeList    方案代码
+     * @param dictDataList      证件类型
+     * @param wrongDataList     错误数据
+     * @param rightCustomerSet  正确数据
+     * @param repeatCustomerSet 重复数据
      * @return
      */
     @Override
     public boolean checkExcelData(Customer customer, List<String> schemeCodeList, List<SysDictData> dictDataList,
-            List<CustomerDto> wrongDataList, Set<CustomerRepeatBo> rightCustomerSet) {
+            List<CustomerDto> wrongDataList, Set<CustomerRepeatBo> rightCustomerSet,
+            Set<CustomerRepeatBo> repeatCustomerSet) {
         boolean isRight = true;
 
         // 错误信息
@@ -335,8 +340,9 @@ public class CustomerServiceImpl implements ICustomerService {
                     if (IdCardVerifyUtil.isValidIdNo(idNumber)) {
                         customer.setBirthdate(DateUtils.parseDate(idNumber.substring(6, 14)));
                         // 若为身份证号且最后一位为X，那么都转为大写的X
-                        if ("x".equals(idNumber.substring(17, 17))) {
+                        if ("x".equals(idNumber.substring(17))) {
                             idNumber = idNumber.substring(0, 17) + "X";
+                            customer.setIdNumber(idNumber);
                         }
                     } else {
                         sb.append("证件号不符合身份证规范；");
@@ -345,9 +351,13 @@ public class CustomerServiceImpl implements ICustomerService {
             }
         }
         // 将证件号和到检日期相同的数据归为错误数据，原因为重复数据
-        if (sb.length() <= 0 && rightCustomerSet
-                .contains(new CustomerRepeatBo(customer.getIdNumber(), customer.getExaminatidonDate()))) {
-            sb.append("该条记录为重复数据（证件号和到检日期相同即重复）；");
+        if (sb.length() <= 0) {
+            CustomerRepeatBo customerRepeatBo = new CustomerRepeatBo(customer.getIdNumber(),
+                    customer.getExaminatidonDate());
+            if (rightCustomerSet.contains(customerRepeatBo)) {
+                repeatCustomerSet.add(customerRepeatBo);
+                sb.append("重复数据；");
+            }
         }
         if (sb.length() > 0) {
             // 错误数据

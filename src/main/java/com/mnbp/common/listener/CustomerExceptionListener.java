@@ -39,7 +39,7 @@ public class CustomerExceptionListener extends AnalysisEventListener<Customer> {
     private Map<Integer, String> headMap = null;
 
     // 操作时间
-    private Date time = new Date();
+    private Date time;
     // 新增数量
     private int insertCount = 0;
 
@@ -53,6 +53,8 @@ public class CustomerExceptionListener extends AnalysisEventListener<Customer> {
     private List<SysDictData> dictDataList;
     // 错误数据
     private List<CustomerDto> wrongDataList;
+    // 重复数据
+    private Set<CustomerRepeatBo> repeatCustomerSet = new HashSet<>(10);
     // 正确数据
     private Set<CustomerRepeatBo> rightCustomerSet = new HashSet<>(10);
 
@@ -63,10 +65,11 @@ public class CustomerExceptionListener extends AnalysisEventListener<Customer> {
     public CustomerExceptionListener() {
     }
 
-    public CustomerExceptionListener(String operName, ICustomerService customerService, CustomerMapper customerMapper,
+    public CustomerExceptionListener(String operName, Date time, ICustomerService customerService, CustomerMapper customerMapper,
             List<String> schemeCodeList, List<SysDictData> dictDataList, List<CustomerDto> wrongDataList,
             Map<String, Object> dataMap) {
         this.operName = operName;
+        this.time = time;
         this.customerService = customerService;
         this.customerMapper = customerMapper;
         this.schemeCodeList = schemeCodeList;
@@ -92,7 +95,8 @@ public class CustomerExceptionListener extends AnalysisEventListener<Customer> {
                     headMap.get(excelDataConvertException.getColumnIndex()), excelDataConvertException.getCellData());
             CustomerDto customerDto = new CustomerDto();
             customerDto.setFailureCause("第" + (excelDataConvertException.getRowIndex() + 1) + "行，" + headMap
-                    .get(excelDataConvertException.getColumnIndex()) + "列解析异常，数据为:" + excelDataConvertException.getCellData());
+                    .get(excelDataConvertException.getColumnIndex()) + "列解析异常，数据为:" + excelDataConvertException
+                    .getCellData());
             wrongDataList.add(customerDto);
         }
     }
@@ -112,7 +116,8 @@ public class CustomerExceptionListener extends AnalysisEventListener<Customer> {
     public void invoke(Customer customer, AnalysisContext context) {
         // 数据校验
         boolean isRight = customerService
-                .checkExcelData(customer, schemeCodeList, dictDataList, wrongDataList, rightCustomerSet);
+                .checkExcelData(customer, schemeCodeList, dictDataList, wrongDataList, rightCustomerSet,
+                        repeatCustomerSet);
         if (!isRight) {
             return;
         }
@@ -133,8 +138,22 @@ public class CustomerExceptionListener extends AnalysisEventListener<Customer> {
 
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
-        insertCount += customerMapper.batchInsertCustomer(insertDataList);
+        if (insertDataList.size() > 0) {
+            insertCount += customerMapper.batchInsertCustomer(insertDataList);
+        }
+
+        // 重复代表着两条以上的相同（证件号和到检日期）数据，由于采用的是分批插入数据库，所以会造成：假定一定存在两条重复数据，第一条数据已经插入到数据库中，第二条数据还没有解析到。
+        // 这里的做法是：重复数据的第一条数据向插入到数据库中，全部解析完成后，根据第二条数据的信息查出第一条数据，将其添加到错误数据list并删除数据
+        for (CustomerRepeatBo repeatCustomer : repeatCustomerSet) {
+            // 找出重复数据
+            CustomerDto customerDto = customerMapper
+                    .selectRepeatCustomer(repeatCustomer.getIdNumber(), repeatCustomer.getExaminatidonDate(), operName,
+                            time);
+            customerDto.setFailureCause("重复数据；");
+            wrongDataList.add(customerDto);
+            insertCount -= customerMapper.deleteCustomerById(customerDto.getId());
+        }
+
         dataMap.put("insertCount", insertCount);
-        LOGGER.info("----------------- 人员导入excel表完成! -----------------");
     }
 }
