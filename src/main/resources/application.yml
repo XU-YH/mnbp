@@ -62,6 +62,8 @@ spring:
     host: localhost
     # 端口
     port: 6379
+    # 密码
+    # password:
     # 连接超时时间
     timeout: 20s
     lettuce:
