@@ -29,6 +29,11 @@ public class WeixinInsuranceInfoVo implements Serializable {
     private Date exminatidonDate;
 
     /**
+     * 保障期限时间戳
+     */
+    private long exDateStamp;
+
+    /**
      * 条款list
      */
     List<SchemeClause> schemeClauseList;

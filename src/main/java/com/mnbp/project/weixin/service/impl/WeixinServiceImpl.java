@@ -33,7 +33,9 @@ public class WeixinServiceImpl implements IWeixinService {
     public WeixinInsuranceInfoVo getInsuranceInfo(WeixinInsuranceInfoBo weixinInsuranceInfoBo) {
         List<WeixinInsuranceInfoVo> list = customerMapper.getInsuranceInfo(weixinInsuranceInfoBo);
         if (list != null && list.size() > 0) {
-            return list.get(0);
+            WeixinInsuranceInfoVo insuranceInfoVo = list.get(0);
+            insuranceInfoVo.setExDateStamp(insuranceInfoVo.getExminatidonDate().getTime());
+            return insuranceInfoVo;
         }
         return null;
     }
